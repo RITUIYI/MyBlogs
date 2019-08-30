@@ -1,0 +1,93 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container">
+  {{include '../_partials/settings-nav.html'}}
+  <div class="col-md-5">
+    <div class="subhead">
+      <h2>修改密码</h2>
+    </div>
+    <hr>
+    <form class="form_edit">
+      <div class="form-group">
+        <input type="hidden" class="form-control" name="id" placeholder="" value="{{users.id}}">
+        <label for="exampleInputPassword1">请输入旧密码</label>
+        <input type="password" class="form-control" name="oldPassword" placeholder="">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">请输入新密码</label>
+        <input type="password" name="newPassword" class="form-control" placeholder="">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">确认新密码</label>
+        <input type="password" name="userpwd" class="form-control" placeholder="">
+      </div>
+      <button type="submit" userId='{{users.id}}' class="btn btn-success btn_save">保存</button>
+    </form>
+    <div class="subhead">
+      <h2>注销账号</h2>
+      <hr>
+    </div>
+    <div>
+      <p>一旦注销，不可找回，请谨慎操作</p>
+      <button userId='{{users.id}}' class="btn cancel btn-danger">确认注销</button>
+    </div>
+    <hr>
+  </div>
+</section>
+{{/block}}
+{{block 'script'}}
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script>
+  $(function () {
+    //编辑信息请求
+    $('.btn_save').on('click', function (e) {
+      e.preventDefault();
+      let id = $(this).attr('userId');
+      // let fd = new FormData($('.form_edit')[0]);
+      let fd = $('form').serialize();
+      console.log(fd);
+
+      $.ajax({
+        url: '/settings/admin',
+        type: 'post',
+        data: fd,
+        success: (backData) => {
+          console.log(backData);
+          
+          alert(backData.message);
+          if (backData.code == 200) {
+            window.location.href = '/'
+          } else {
+            window.location = backData.backurl;
+          }
+        }
+      })
+    })
+    //注销账户请求
+    $('.cancel').on('click', function (e) {
+      e.preventDefault();
+      let id = $(this).attr('userId');
+      console.log(id);
+      if (confirm('确认注销吗 该操作无法撤销')) {
+
+        $.ajax({
+          url: '/cancel',
+          type: 'post',
+          data: {
+            id: id
+          },
+          success: (backData) => {
+            if (backData.code == 200) {
+              alert(backData.message);
+              window.location = '/login'
+            }
+          }
+        })
+      }
+    })
+  })
+</script>
+{{/block}}

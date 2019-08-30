@@ -1,0 +1,61 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'head'}}
+<link rel="stylesheet" href="/public/css/markdown-github.css">
+<style>
+  .panel .panel-heading .action i {
+    margin-right: 10px;
+  }
+</style>
+{{/block}}
+
+{{block 'body'}}
+{{if article == undefine || comments == undefine || user == undefine}}
+<h1 style="text-align: center">请返回登录以查看文章</h1>
+{{else}}
+<img src="{{article.cover}}" style="height: 200px; position: absolute; right: 20px; top:190px" alt="">
+<section class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <article class="markdown-body">
+        <h1 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span
+              class="headeranchor"></span></a>{{article.title}}</h1>
+        <blockquote>
+          <p>{{article.content}}</p>
+        </blockquote>
+        <p id="_4"><a name="user-content-_4" href="#_4" class="headeranchor-link" aria-hidden="true"><span
+              class="headeranchor"></span></a>发布于{{article.date}}</p>
+      </article>
+      {{each comments}}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span style="font: bold italic 18px '微软雅黑'">{{$value.username}}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布于
+          <span>{{$value.creatime}}</span>
+          <span class="action">
+            <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
+            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
+            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
+          </span>
+        </div>
+        <p style="text-indent: 2em" class="panel-body">
+          {{$value.content}}
+        </p>
+      </div>
+      {{/each}}
+      <hr>
+      <form action="/comment" method="post">
+        <div class="form-group">
+          <input type="hidden" name="username" value="{{user.nickname}}">
+          <input type="hidden" name="artid" value="{{article.articleid}}">
+          <label for="exampleInputPassword1">添加回复</label>
+          <textarea class="form-control" name="content" id="" cols="10" rows="10"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">回复</button>
+      </form>
+    </div>
+  </div>
+</section>
+{{/if}}
+{{/block}}
